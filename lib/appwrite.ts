@@ -1,13 +1,18 @@
-import {Account, Client,Databases , Avatars, ID, Query} from "react-native-appwrite";
-import {CreateUserParams, GetMenuParams, SignInParams} from "@/type";
+import {Account, Client,Databases , Avatars, ID, Query, Storage} from "react-native-appwrite";
+import {CreateUserParams, GetMenuParams, SignInParams, MenuItem, Category} from "@/type";
 
 export const appwriteConfig = {
     endpoint:process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
-    platform:" com.rukk.ChopChop app",
+    platform:"com.rukk.ChopChop",
     projectId:process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
     projectName:process.env.EXPO_PUBLIC_APPWRITE_PROJECT_NAME,
     databaseId:'691c75d1000ed1035207',
-    userTableId:'user',
+    bucketId: '691f43c80028c833062f',
+    userCollectionId:'user',
+    categoriesCollectionId: 'categories',
+    menuCollectionId: 'menu',
+    customizationsCollectionId: 'customizations',
+    menuCustomizationsCollectionId: 'menu_customizations',
 }
 export const client = new Client();
 
@@ -15,10 +20,13 @@ client
     .setEndpoint(appwriteConfig.endpoint)
     .setProject(appwriteConfig.projectId)
     .setPlatform(appwriteConfig.platform)
+   
 
 export const account = new Account(client);
 
 export const databases = new Databases(client);
+
+export const storage = new Storage (client);
 
 const avatar = new Avatars (client);
 
@@ -33,7 +41,7 @@ export const CreateUser = async ({email ,password, name}: CreateUserParams) => {
 
     return await databases.createDocument(
         appwriteConfig.databaseId,
-        appwriteConfig.userTableId,
+        appwriteConfig.userCollectionId,
         ID.unique(),
         {  email, name, accountId:newAccount.$id, avatar: avatarUrl
 
@@ -61,7 +69,7 @@ export const getCurrentUser = async() => {
 
         const currentUser = await databases.listDocuments(
             appwriteConfig.databaseId,
-            appwriteConfig.userTableId,
+            appwriteConfig.userCollectionId,
             [Query.equal('accountId', currentAccount.$id)]
 
         )
@@ -73,4 +81,44 @@ export const getCurrentUser = async() => {
         throw new Error(e as string)
     }
 
+}
+
+export const getMenu = async({category, query}: GetMenuParams): Promise<MenuItem[]> => {
+    try{
+        const queries:string[] = [];
+        if(category) queries.push(Query.equal('categories.$id', category));
+        if(query) queries.push(Query.search('name', query));
+
+        
+
+        const menu = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.menuCollectionId,
+            queries
+        )
+        
+       
+        return menu.documents as unknown as MenuItem[];
+
+    }catch(e){
+        console.error('Error in getMenu:', e);
+        throw new Error(e as string)
+
+    }
+}
+
+export const getCategories = async(): Promise<Category[]> => {
+    try{
+        const categories = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.categoriesCollectionId
+        
+        )
+
+        return categories.documents as unknown as Category[];
+
+    }catch(e){
+        throw new Error(e as string)
+
+    }
 }

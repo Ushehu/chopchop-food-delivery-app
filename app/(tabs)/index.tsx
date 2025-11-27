@@ -6,6 +6,7 @@ import { Fragment } from "react";
 import cn from 'clsx';
 import * as Sentry from '@sentry/react-native';
 import useAuthStore from "@/store/auth.store";
+import seed from '@/lib/seed';
 
 
 export default function Index() {
@@ -75,3 +76,4 @@ export default function Index() {
    </SafeAreaView>
   );
 }
+

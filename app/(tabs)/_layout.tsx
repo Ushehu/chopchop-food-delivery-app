@@ -1,20 +1,22 @@
 import { Redirect, Tabs} from 'expo-router';
 import useAuthStore from "@/store/auth.store";
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, Platform } from 'react-native';
 import { TabBarIconProps } from '@/type';
 import {images} from '@/constants';
 import cn from 'clsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const TabBarIcon = ({focused,icon,title}: TabBarIconProps) =>(
   <View className="tab-icon">
     <Image source={icon} className="size-7" resizeMode="contain" tintColor={focused ? '#FE8C00':'#5D5F6D'}/>
     <Text className={cn("text-sm font-bold" , focused ? 'text-primary' : 'text-gray-200')}>
       {title}</Text>
-
   </View>
 )
+
 export default function TabLayout(){
     const {isAuthenticated} = useAuthStore();
+    const insets = useSafeAreaInsets();
 
     if(!isAuthenticated)return <Redirect href="/sign-in"/>
   return(<Tabs
@@ -29,14 +31,14 @@ export default function TabLayout(){
       marginHorizontal : 20,
       height : 80,
       position : 'absolute',
-      bottom : 20,
+      bottom : 20 + insets.bottom, // Add safe area bottom inset
       backgroundColor : 'white',
       shadowColor : '#1a1a1a',
       shadowOffset : {width:0,height:2},
       shadowOpacity : 0.1,
       shadowRadius : 4,
       elevation : 5,
-
+      paddingBottom: Platform.OS === 'android' ? 10 : 0, // Extra padding for Android
     }
   }}
   >
@@ -72,5 +74,3 @@ export default function TabLayout(){
   </Tabs>)
   
 }
-
-
