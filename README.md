@@ -20,7 +20,7 @@ A production-ready React Native food delivery app built with Expo, TypeScript, a
 ChopChop is a modern, feature-rich food delivery mobile application designed to connect users with their favorite restaurants. Built with cutting-edge technologies including React Native, Expo, TypeScript, and Appwrite for a seamless, secure, and scalable experience.
 
 ---
-## Screenshots
+## 📸 App Screenshots
 
 ![Screenshot 1](screenshot1.jpg)
 ![Screenshot 2](screenshot2.jng)
