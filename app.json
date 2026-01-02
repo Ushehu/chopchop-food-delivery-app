@@ -45,7 +45,8 @@
           "project": "rukk-chopchop",
           "organization": "rukk"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
